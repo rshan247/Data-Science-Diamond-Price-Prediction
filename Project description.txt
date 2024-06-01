@@ -1,0 +1,45 @@
+Project Description:
+
+This project gives students an opportunity to apply some of the predictive analytics model covered in class. 
+The project will be done individually.
+Students are given a data set that has characteristics of diamonds like, color, cut, etc. and their related prices.
+They are expected to come up with a pricing model that works best in the scenario.
+Eighty percent of the sample data set should be used to build the model.
+The other 20% of the sample (hold out sample) should be used to test the model to see how well the model predicts diamond prices.
+The project must be completed in python.
+You should have the requisite software installed.
+
+Project Expectation:
+
+1.Convert the dataset into a balance dataset.
+2.Train and split
+3.Study the distribution of the data by building histograms using matplotlib.
+4.Determine all the descriptive stats of the data.
+5.standardize the dataset.
+6.Determine the co-relation matrix to study the various co-relations of the data
+7.Build different prediction using the data.
+8.Show every output in the form of visualization (use seaborn).
+9.Execute proper metrics to predict the model.
+
+
+Submit a Project Report:
+After you have accomplished the above, record your observations and submit an individual project 
+
+
+1.Description of the project (5 Marks)
+2.Description of the data (5 marks)
+3.Your analyses of the data based on the distributions and the descriptive statistics (10 marks)
+4.Any data transformations that you may have done and describe the reasoning behind them (10 Marks)
+5.Describe how the data set was standardized (10 marks)
+6.Analyze the co-relation matrix and describe how it will impact your prediction models. Did any of the co-relations impact the models?
+Because of the co-relations, did you drop any variables?(10 Marks)
+
+7.Describe the results of the different predictive models that you choose (20 Marks)
+8.Identify which model was the best and why (10 Marks)
+9. What is the level of confidence you have in the final model selected. Identify the limitations of your model. (10 Marks)
+
+
+
+
+Note:
+1.Use different methods for each model and show maximum variations.
