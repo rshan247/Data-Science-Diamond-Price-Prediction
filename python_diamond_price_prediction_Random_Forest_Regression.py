@@ -46,6 +46,8 @@ def encode_categorical_features(data):
 
     data['color'] = encoder.fit_transform(data['color'])
     data['clarity'] = encoder.fit_transform(data['clarity'])
+    pd.set_option("display.max_column", None)
+    print(data.head(30))
     return data
 
 
