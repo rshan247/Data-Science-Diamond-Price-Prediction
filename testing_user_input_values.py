@@ -2,11 +2,16 @@ import numpy as np
 import joblib
 from flask import Flask , request, jsonify
 from flask_cors import CORS
-from collections import OrderedDict
+import pandas as pd
+from werkzeug.utils import secure_filename
+import os
 
 
 app = Flask(__name__)
 CORS(app)
+
+# UPLOAD_FOLDER = 'uploads'
+# app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
 # Load the model
@@ -39,6 +44,24 @@ def predict():
         return jsonify({'error': str(e)}), 400
 user_input = np.array([.83, 5.98, 3, 1, 4.43, 3.95])
 
+@app.route("/upload", methods = ["POST"])
+def handle_upload():
+    try:
+        print(request.files['file'])
+        file = request.files['file']
+        print("8888888888")
+        if 'file' not in request.files:
+            return jsonify({'error': "No file uploaded"}), 400
+
+        if file:
+            # filename = secure_filename(file.filename)
+            # filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            # file.save(filepath)
+            df = pd.read_csv(file)
+            print(df)
+            return {"Message": "Success"}, 200
+    except Exception as e:
+        print(e)
 
 if __name__ == '__main__':
     app.run(debug=True)

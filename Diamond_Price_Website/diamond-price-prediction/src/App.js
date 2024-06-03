@@ -1,10 +1,10 @@
 import './App.css';
-import DiamondForm from './Components/Diamonds';
+import Diamonds from './Components/Diamonds';
 
 function App() {
   return (
     <div className="App">
-      <DiamondForm />
+      <Diamonds />
     </div>
   );
 }

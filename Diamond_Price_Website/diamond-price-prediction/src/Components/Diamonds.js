@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Select, { components } from 'react-select';
 import axios from "axios";
 import diamondIcon from '../others/diamond-color-icon.png';
+import FileUpload from './FileUpload';
 
 
 const clarityOptions = [
@@ -25,7 +26,7 @@ const colorOptions = [
   { value: 6, label: 'J' }
 ];
 
-function DiamondForm(){
+function Diamonds(){
   const [carat, setCarat] = useState('');
   const [x, setX] = useState('');
   const [y, setY] = useState('');
@@ -33,9 +34,16 @@ function DiamondForm(){
   const [color, setColor] = useState('');
   const [clarity, setClarity] = useState('');
   const [diamondPrice, setDiamondPrice] = useState('');
+  const [showFileUpload, setShowFileUpload] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
+
+    if (!carat || !x || !y || !z || !color || !clarity) {
+      alert("Please fill all the fields.");
+      return;
+    }
+
     const diamondData = {
         carat: parseFloat(carat),
         x: parseFloat(x),
@@ -59,8 +67,12 @@ function DiamondForm(){
     //   .catch(error => console.error(error));
   };
 
+  if (showFileUpload){
+    return <FileUpload />
+  }
+
   return (
-    <form onSubmit={handleSubmit}>
+    <form className="form" onSubmit={handleSubmit}>
     <div className='title'>
         <img src={diamondIcon} alt='Diamond icon'/>
         <h1>Diamond Price Predictor</h1>
@@ -71,7 +83,6 @@ function DiamondForm(){
           type="number"
           value={carat}
           onChange={(e) => setCarat(e.target.value)}
-          required
         />
       </div>
       <div>
@@ -80,7 +91,6 @@ function DiamondForm(){
           type="number"
           value={x}
           onChange={(e) => setX(e.target.value)}
-          required
         />
       </div>
       <div>
@@ -89,7 +99,6 @@ function DiamondForm(){
           type="number"
           value={y}
           onChange={(e) => setY(e.target.value)}
-          required
         />
       </div>
       <div>
@@ -98,7 +107,6 @@ function DiamondForm(){
           type="number"
           value={z}
           onChange={(e) => setZ(e.target.value)}
-          required
         />
       </div>
       <div>
@@ -107,7 +115,6 @@ function DiamondForm(){
           options={colorOptions}
           value={color}
           onChange={setColor}
-          required
         />
       </div>
       <div>
@@ -116,13 +123,13 @@ function DiamondForm(){
           options={clarityOptions}
           value={clarity}
           onChange={setClarity}
-          required
         />
       </div>
       <button type="submit">Predict Price</button>
+      <button onClick={() => setShowFileUpload(true)}>Upload file</button>
       {diamondPrice != "" && <p className='result'>The predicted price of the diamond is <span className='price'>{diamondPrice}$</span></p>}
     </form>
   );
 };
 
-export default DiamondForm;
+export default Diamonds;
