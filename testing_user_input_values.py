@@ -1,8 +1,9 @@
 import numpy as np
 import joblib
-from flask import Flask , request, jsonify
+from flask import Flask , request, jsonify, send_file
 from flask_cors import CORS
 import pandas as pd
+from io import BytesIO
 from werkzeug.utils import secure_filename
 import os
 
@@ -23,11 +24,33 @@ def standardize_user_input(user_input, means_array, stds_array):
     return (user_input - means_array) / stds_array
 
 def predict_price(user_input):
-
     user_input_standardized = standardize_user_input(user_input, means, stds)
-    result = random_forest_model.predict([user_input_standardized])
+
+    if isinstance(user_input, list):
+        result = random_forest_model.predict([user_input_standardized])
+    else:
+        result = random_forest_model.predict(user_input_standardized)
+
+
     return result
     print(f"The predicted price for the inputted diamond attributes is {result}")
+
+
+
+def encode_user_input(user_input):
+    color_map = {"D": 0, "E": 1, "F": 2, "G": 3, "H": 4, "I": 5, "J": 6}
+    clarity_map =  {"I1": 0, "IF": 1,"SI1": 2,"SI2": 3, "VS1": 4, "VS2": 5,"VVS1": 6, "VVS2": 7}
+
+    user_input["color"] = user_input['color'].map(color_map)
+    user_input["clarity"] = user_input["clarity"].map(clarity_map)
+    return user_input
+
+
+def concat_df(user_input, prediced_price):
+    prediced_price_df = pd.DataFrame(prediced_price, columns=['price'])
+    final_price_predicted_df = pd.concat([user_input, prediced_price_df], axis=1)
+    print(final_price_predicted_df)
+    return final_price_predicted_df
 
 
 @app.route('/predict', methods = ['POST'])
@@ -49,19 +72,35 @@ def handle_upload():
     try:
         print(request.files['file'])
         file = request.files['file']
-        print("8888888888")
+
         if 'file' not in request.files:
             return jsonify({'error': "No file uploaded"}), 400
 
         if file:
-            # filename = secure_filename(file.filename)
-            # filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            # file.save(filepath)
-            df = pd.read_csv(file)
-            print(df)
-            return {"Message": "Success"}, 200
+            user_input_df = pd.read_csv(file)
+
+            encoded_user_input = encode_user_input(user_input_df.copy())
+
+            ordered_features = ['carat', 'y', 'clarity', 'color', 'z', 'x']
+            price_predicted_df = predict_price(encoded_user_input[ordered_features])
+
+            # final_price_predicted_df
+            final_predicted_df = concat_df(user_input_df, price_predicted_df)
+
+            csv_buffer = BytesIO()
+            predicted_csv_file = final_predicted_df.to_csv(index = False)
+            csv_buffer.write(predicted_csv_file.encode('utf-8'))
+            csv_buffer.seek(0)
+
+            return send_file(
+                csv_buffer,
+                as_attachment=True,
+                download_name="Predicted_prices.csv",
+                mimetype='text/csv'
+            ), 200
     except Exception as e:
         print(e)
+        return jsonify({'error': str(e)}), 400
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -9,6 +9,8 @@ function FileUpload(){
 
     const [file, setFile] = useState(null);
     const [back, setBack] = useState(false);
+    const [url, setUrl] = useState();
+    const [downloadAttr, setDownloadAttr] = useState();
 
     function handleFileChange(e){
         setFile(e.target.files[0]);
@@ -16,6 +18,12 @@ function FileUpload(){
     }
     async function handleSubmit(e){
         e.preventDefault();
+
+        if (!file) {
+            alert("Please select a file to upload.");
+            return;
+          }
+        
         const formData = new FormData();
         formData.append('file', file);
 
@@ -24,8 +32,21 @@ function FileUpload(){
                 headers: {
                   'Content-Type': 'multipart/form-data',
                 },
+                responseType:"blob",
               });
             console.log(result.data);
+            console.log(url);
+
+            setUrl(window.URL.createObjectURL(new Blob([result.data], { type: 'text/csv' })));
+            setDownloadAttr('predicted_prices.csv');
+            // const link = document.createElement('a');
+            // link.href = url;
+            // link.setAttribute('download', 'predicted_prices.csv');
+            // document.body.appendChild(link);
+            // link.click();
+            // document.body.removeChild(link);
+
+            
         }
         catch(err){
             console.log(err);
@@ -51,7 +72,10 @@ function FileUpload(){
                     />
                 </div>
                 <button type="submit">Upload</button>
-                <button onClick={() => setBack(true)}>Back</button>
+                <button onClick={() => setBack(true)}>Back</button><br/>
+                {url != null && <a className="download"
+                href={url}
+                download={downloadAttr}>Download Price Predicted File</a>}
             </form>
         </div>
     )
