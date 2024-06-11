@@ -1,0 +1,90 @@
+body {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f2f2f2;
+}
+
+.App{
+  width: 800px;
+}
+
+.title{
+  text-align: center;
+  color: #00c3ff ;
+  -webkit-text-stroke: 1px black;
+}
+
+.title img{
+  width: 50px;
+}
+
+.title h1{
+  margin-top: 5px;
+}
+
+.form {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  text-align: left;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+input[type="number"] {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.select-container {
+  margin-bottom: 10px;
+}
+
+.select-container .react-select__control {
+  width: 100%;
+}
+
+button {
+  background-color: #00c3ff;
+  color: white;
+  padding: 10px 15px;
+  margin: 10px 0;
+  margin-right: 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.result{
+  font-size: larger;
+  font-weight: 600;
+  text-align: center;
+  color: green;
+}
+
+.price{
+  color: #0056b3;
+}

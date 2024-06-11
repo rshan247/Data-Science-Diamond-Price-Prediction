@@ -6,6 +6,7 @@ from sklearn.preprocessing import StandardScaler, OneHotEncoder, LabelEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error, r2_score
+import joblib
 
 
 def importdata():
@@ -45,6 +46,8 @@ def encode_categorical_features(data):
 
     data['color'] = encoder.fit_transform(data['color'])
     data['clarity'] = encoder.fit_transform(data['clarity'])
+    pd.set_option("display.max_column", None)
+    print(data.head(30))
     return data
 
 
@@ -53,8 +56,11 @@ def standardize_numerical_features(data, standardized_features):
 
     data[standardized_features] = scaler.fit_transform(data[standardized_features])
 
+    means_array = scaler.mean_
+    stds_array = scaler.scale_
+
     print(f"\nStandardized data set:\n{data.head()}")
-    return data
+    return data, means_array, stds_array
 
 
 def correlation_matrix(data):
@@ -130,6 +136,17 @@ def y_prediction_visualization(x_test, y_test, y_prediction):
     plt.figure(figsize=(10, 6))
 
 
+def save_means_stds_array( means_array, stds_array, features, x):
+    # Extract means and stds for only the selected features
+    selected_means = means_array[x.columns.get_indexer(features)]
+    selected_stds = stds_array[x.columns.get_indexer(features)]
+
+    # Save the means and stds to files
+    np.save('Saved_model_files/means.npy', selected_means)
+    np.save('Saved_model_files/stds.npy', selected_stds)
+
+
+
 
 def main():
     diamond_data = importdata()
@@ -146,7 +163,7 @@ def main():
     # Standardizing numerical values
     standardized_features = [col for col in diamond_data.columns if col != 'price' ]
     # standardized_features = [col for col in diamond_data.select_dtypes(include=[np.number]).columns if col != 'price']
-    diamond_data = standardize_numerical_features(diamond_data, standardized_features)
+    diamond_data, means_array, stds_array = standardize_numerical_features(diamond_data, standardized_features)
 
     # visualizig correlation matrix
     correlation_matrix(diamond_data)
@@ -156,6 +173,8 @@ def main():
     y = diamond_data['price']
 
     selected_features = feature_importance(diamond_data, x, y)
+
+    save_means_stds_array(means_array, stds_array, selected_features, x)
 
     # Model Training
     x = diamond_data[selected_features]
@@ -167,6 +186,9 @@ def main():
     y_prediction = predict(x_test, random_forest_prediction)
     cal_accuracy(y_test, y_prediction)
     y_prediction_visualization(x_test, y_test, y_prediction)
+
+    # Save the model
+    joblib.dump(random_forest_prediction, "Saved_model_files/random_forest_model.pkl")
 
 
 #Calling main function
